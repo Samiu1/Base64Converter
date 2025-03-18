@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Local Base64 Converter</title>
@@ -10,6 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         .container {
             display: grid;
             gap: 2rem;
@@ -17,36 +19,53 @@
             max-width: 800px;
             margin: auto;
         }
+
         .section {
             border: 1px solid #ccc;
             padding: 1rem;
             border-radius: 8px;
         }
+
         .input-group {
             margin: 1rem 0;
         }
-        textarea, select, input, button {
+
+        textarea,
+        select,
+        input,
+        button {
             width: 100%;
             padding: 0.5rem;
             margin-top: 0.5rem;
             border-radius: 4px;
             border: 1px solid #ccc;
-            box-sizing: border-box;;
+            box-sizing: border-box;
+            ;
         }
+
         textarea {
             resize: vertical;
         }
+
         .drop-zone {
-            border: 2px dashed #666; 
-            padding: 2rem; 
-            text-align: center; 
-            margin-top: 1rem; 
-            cursor: pointer; 
+            border: 2px dashed #666;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
+
+        .drop-zone:hover {
+            background-color: #f5f5f5;
+        }
+
         .active-drop {
             background-color: #f0f0f0;
         }
-        #decodeInput, #encodeOutput {
+
+        #decodeInput,
+        #encodeOutput {
             width: 100%;
             padding: 0.5rem;
             margin-top: 0.5rem;
@@ -57,12 +76,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Decoding Section -->
         <div class="section">
             <h2>Decode Base64</h2>
-            
+
             <!-- Dropdown and Button -->
             <select id="decodeType">
                 <option value="ascii">ASCII to Base64</option>
@@ -100,10 +120,12 @@
 
             <!-- File Input and Drop Zone -->
             <input type="file" id="fileInput" hidden />
-            <button onclick="document.getElementById('fileInput').click()">Choose File</button>
-            
-            <div class="drop-zone" id="dropZone">
-                Drag and drop files here or paste URL below
+            <!-- Remove this button -->
+            <!-- <button onclick="document.getElementById('fileInput').click()">Choose File</button> -->
+
+            <!-- Update the drop zone div to be clickable -->
+            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                Drag and drop files here or click to choose file
             </div>
 
             <!-- URL Input -->
@@ -184,7 +206,7 @@
                 } else if (type === 'text') {
                     decoded = atob(input);
                 }
-                
+
                 let output;
 
                 switch (type) {
@@ -234,9 +256,9 @@
             } else if (type === 'text') {
                 encoded = btoa(unescape(encodeURIComponent(input)));
             } else if (type === 'image') {
-                 handleFile();
+                handleFile();
             }
-             else {
+            else {
                 alert('Unsupported encode type');
                 return;
             }
@@ -245,4 +267,5 @@
         }
     </script>
 </body>
+
 </html>
