@@ -65,14 +65,14 @@
             
             <!-- Dropdown and Button -->
             <select id="decodeType">
-                <option value="ascii">Base64 to ASCII</option>
-                <option value="audio">Base64 to Audio</option>
-                <option value="file">Base64 to File</option>
-                <option value="hex">Base64 to Hex</option>
-                <option value="image">Base64 to Image</option>
-                <option value="pdf">Base64 to PDF</option>
-                <option value="text">Base64 to Text</option>
-                <option value="video">Base64 to Video</option>
+                <option value="ascii">ASCII to Base64</option>
+                <option value="text">Text to Base64</option>
+                <option value="audio">Audio to Base64</option>
+                <option value="file">File to Base64</option>
+                <option value="hex">Hex to Base64</option>
+                <option value="image">Image to Base64</option>
+                <option value="pdf">PDF to Base64</option>
+                <option value="video">Video to Base64</video>
             </select>
             <button onclick="handleDecode()">Decode</button>
 
@@ -89,6 +89,8 @@
 
             <!-- Dropdown -->
             <select id="encodeType" onchange="updateFileAccept()">
+                <option value="ascii">ASCII to Base64</option>
+                <option value="text">Text to Base64</option>
                 <option value="image">Image to Base64</option>
                 <option value="pdf">PDF to Base64</option>
                 <option value="audio">Audio to Base64</option>
@@ -106,6 +108,11 @@
 
             <!-- URL Input -->
             <input type="url" id="urlInput" placeholder="Enter URL..." />
+
+            <!-- Text Input -->
+            <textarea id="encodeInput" placeholder="Enter text to encode..." rows="5"></textarea>
+
+            <button onclick="handleEncode()">Encode</button>
 
             <!-- Output Field -->
             <textarea id="encodeOutput" rows="5" readonly></textarea>
@@ -169,15 +176,23 @@
         function handleDecode() {
             const input = document.getElementById('decodeInput').value;
             const type = document.getElementById('decodeType').value;
-            
+
             try {
-                const decoded = atob(input);
+                let decoded;
+                if (type === 'ascii') {
+                    decoded = atob(input);
+                } else if (type === 'text') {
+                    decoded = atob(input);
+                }
+                
                 let output;
 
-                switch(type) {
+                switch (type) {
                     case 'ascii':
+                        output = `${decoded}`;
+                        break;
                     case 'text':
-                        output = `<pre>${decoded}</pre>`;
+                        output = `${decoded}`;
                         break;
                     case 'audio':
                         output = `<audio controls src="data:audio/*;base64,${input}">Your browser does not support the audio element.</audio>`;
@@ -197,7 +212,7 @@
                         output = `<iframe src="data:application/pdf;base64,${input}" width="100%" height="500px"></iframe>`;
                         break;
                     case 'video':
-                        output = `<video controls src="data:video/*;base64,${input}">Your browser does not support the video element.</video>`;
+                        output = `<video controls src="data:video/*;base64,${input}">Your browser does not support the video element.</audio>`;
                         break;
                     default:
                         output = 'Unsupported decode type';
@@ -207,6 +222,26 @@
             } catch (error) {
                 alert('Decoding error: ' + error.message);
             }
+        }
+
+        function handleEncode() {
+            const input = document.getElementById('encodeInput').value;
+            const type = document.getElementById('encodeType').value;
+            let encoded = '';
+
+            if (type === 'ascii') {
+                encoded = btoa(unescape(encodeURIComponent(input)));
+            } else if (type === 'text') {
+                encoded = btoa(unescape(encodeURIComponent(input)));
+            } else if (type === 'image') {
+                 handleFile();
+            }
+             else {
+                alert('Unsupported encode type');
+                return;
+            }
+
+            document.getElementById('encodeOutput').value = encoded;
         }
     </script>
 </body>
