@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Local Base64 Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            display: grid;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 800px;
+            margin: auto;
+        }
+        .section {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .input-group {
+            margin: 1rem 0;
+        }
+        textarea, select, input, button {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .drop-zone {
+            border: 2px dashed #666; 
+            padding: 2rem; 
+            text-align: center; 
+            margin-top: 1rem; 
+            cursor: pointer; 
+        }
+        .active-drop {
+            background-color: #f0f0f0;
+        }
+        #decodeInput, #encodeOutput {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Decoding Section -->
+        <div class="section">
+            <h2>Decode Base64</h2>
+            
+            <!-- Dropdown and Button -->
+            <select id="decodeType">
+                <option value="ascii">Base64 to ASCII</option>
+                <option value="audio">Base64 to Audio</option>
+                <option value="file">Base64 to File</option>
+                <option value="hex">Base64 to Hex</option>
+                <option value="image">Base64 to Image</option>
+                <option value="pdf">Base64 to PDF</option>
+                <option value="text">Base64 to Text</option>
+                <option value="video">Base64 to Video</option>
+            </select>
+            <button onclick="handleDecode()">Decode</button>
+
+            <!-- Input Field -->
+            <textarea id="decodeInput" placeholder="Paste Base64 here..." rows="5" style="padding: 2rem;"></textarea>
+
+            <!-- Output -->
+            <div id="decodeOutput"></div>
+        </div>
+
+        <!-- Encoding Section -->
+        <div class="section">
+            <h2>Encode to Base64</h2>
+
+            <!-- Dropdown -->
+            <select id="encodeType" onchange="updateFileAccept()">
+                <option value="image">Image to Base64</option>
+                <option value="pdf">PDF to Base64</option>
+                <option value="audio">Audio to Base64</option>
+                <option value="video">Video to Base64</option>
+                <option value="file">File to Base64</option>
+            </select>
+
+            <!-- File Input and Drop Zone -->
+            <input type="file" id="fileInput" hidden />
+            <button onclick="document.getElementById('fileInput').click()">Choose File</button>
+            
+            <div class="drop-zone" id="dropZone">
+                Drag and drop files here or paste URL below
+            </div>
+
+            <!-- URL Input -->
+            <input type="url" id="urlInput" placeholder="Enter URL..." />
+
+            <!-- Output Field -->
+            <textarea id="encodeOutput" rows="5" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        // File type mapping
+        const fileAcceptMap = {
+            image: "image/*",
+            pdf: "application/pdf",
+            audio: "audio/*",
+            video: "video/*",
+            file: "*"
+        };
+
+        function updateFileAccept() {
+            const type = document.getElementById('encodeType').value;
+            document.getElementById('fileInput').accept = fileAcceptMap[type] || "*";
+        }
+
+        // Drag and drop handlers
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active-drop');
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active-drop');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+        });
+
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        // URL input handler
+        document.getElementById('urlInput').addEventListener('change', async (e) => {
+            try {
+                const response = await fetch(e.target.value);
+                const blob = await response.blob();
+                handleFile(blob);
+            } catch (error) {
+                alert('Error fetching URL: ' + error.message);
+            }
+        });
+
+        async function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.getElementById('encodeOutput').value = reader.result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleDecode() {
+            const input = document.getElementById('decodeInput').value;
+            const type = document.getElementById('decodeType').value;
+            
+            try {
+                const decoded = atob(input);
+                let output;
+
+                switch(type) {
+                    case 'ascii':
+                    case 'text':
+                        output = `<pre>${decoded}</pre>`;
+                        break;
+                    case 'audio':
+                        output = `<audio controls src="data:audio/*;base64,${input}">Your browser does not support the audio element.</audio>`;
+                        break;
+                    case 'file':
+                        const blob = new Blob([decoded]);
+                        const url = URL.createObjectURL(blob);
+                        output = `<a href="${url}" download="decoded_file">Download Decoded File</a>`;
+                        break;
+                    case 'hex':
+                        output = `<pre>${decoded.split('').map(char => char.charCodeAt(0).toString(16).padStart(2, '0')).join(' ')}</pre>`;
+                        break;
+                    case 'image':
+                        output = `<img src="data:image/*;base64,${input}" alt="Decoded Image" style="width: 100%;">`;
+                        break;
+                    case 'pdf':
+                        output = `<iframe src="data:application/pdf;base64,${input}" width="100%" height="500px"></iframe>`;
+                        break;
+                    case 'video':
+                        output = `<video controls src="data:video/*;base64,${input}">Your browser does not support the video element.</video>`;
+                        break;
+                    default:
+                        output = 'Unsupported decode type';
+                }
+
+                document.getElementById('decodeOutput').innerHTML = output;
+            } catch (error) {
+                alert('Decoding error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
