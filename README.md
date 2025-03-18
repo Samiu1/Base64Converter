@@ -4,7 +4,7 @@ This is a simple locally run Base64 converter that allows you to encode and deco
 
 ## Features
 
-- Decode Base64 to:
+- Decode/Encode Base64 to/from:
   - ASCII
   - Audio
   - File
@@ -12,13 +12,6 @@ This is a simple locally run Base64 converter that allows you to encode and deco
   - PDF
   - Text
   - Video
-  
-- Encode to Base64 from:
-  - Image
-  - PDF
-  - Audio
-  - Video
-  - File
   
 - Drag and drop files
 - URL input
