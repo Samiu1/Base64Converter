@@ -4,8 +4,23 @@ This is a simple locally run Base64 converter that allows you to encode and deco
 
 ## Features
 
-- Decode Base64 to ASCII, Image, PDF, etc.
-- Encode Image, PDF, etc. to Base64
+- Decode Base64 to:
+  -ASCII
+  -Audio
+  -File
+  -Image
+  -PDF
+  -Text
+  -Video
+  
+- Encode
+  -Image
+  -PDF
+  -Audio
+  -Video
+  -File
+  To Base64
+  
 - Drag and drop files
 - URL input
 
